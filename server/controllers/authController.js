@@ -183,6 +183,76 @@ export const isAuthenticated = async (req, res) => {
     } catch (error) {
         return res.json({ sucess: false, message: error.message })
     }
+}
 
+//password reset otp
+export const sendResetOtp=async (req,res) => {
+    const {email}=req.body;
+    if(!email){
+        return res.json({sucess:false,message:"Email is required"})
+    }
 
+    try {
+        const user=await userModel.findOne({email})
+
+        if(!user){
+            return res.json({sucess:false,message:"User not found"})
+        }
+
+        const otp = String(Math.floor(100000 + Math.random() * 900000)) //6 digit number and convert to string
+
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 15* 60 * 1000 //expires in 15 min
+        await user.save();
+
+        const mailOption = {
+            from: process.env.SENDER_EMAIL,
+            to: user.email,
+            subject: "Password rest OTP",
+            text: `Your OTP for reseting password is ${otp}. `
+        }
+        await transporter.sendMail(mailOption)
+
+        return res.json({sucess:true,message:"OTP sent to your email"})
+    } catch (error) {
+        return res.json({sucess:false,message:error.message})
+        
+    }
+    
+}
+
+//Rest user password
+
+export const resetPassword=async (req,res) => {
+    const{email,otp,newPassword}= req.body;
+
+    if(!email || !otp || !newPassword){
+        return res.json({sucess:false,message:"Email,OTP and new password are required"})
+    }
+    
+    try {
+        const user=await userModel.findOne({email})
+
+        if(!user){
+            return res.json({sucess:false,message:"User not found"})
+        }
+
+        if(user.resetOtp==="" || user.resetOtp!==otp){
+            return res.json({sucess:false,message:"Invalid OTP"})
+        }
+        if(user.resetOtpExpireAt< Date.now()){
+            return res.json({sucess:false,message:"OTP Expired"})
+        }
+        const hashedPassword = await bcrypt.hash(newPassword,10)
+
+        user.password=hashedPassword;
+        user.resetOtp="";
+        user.resetOtpExpireAt=0;
+
+        await user.save();
+        return res.json({sucess:true, message:"Password has been reset sucessfully"})
+        
+    } catch (error) {
+        return res.json({sucess:false,message:error.message})    
+    }
 }
