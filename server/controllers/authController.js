@@ -146,32 +146,43 @@ export const sendVerifyOtp = async (req, res) => {
 
 }
 
-export const verifyEmail= async (req,res) => {
-    const { userId,otp } = req.body;
+export const verifyEmail = async (req, res) => {
+    const { userId, otp } = req.body;
 
-    if(!userId || !otp){
-        return res.json({sucess:false,message:"Missing details"})
+    if (!userId || !otp) {
+        return res.json({ sucess: false, message: "Missing details" })
     }
 
     try {
-        const user=await userModel.findById(userId);
-        if(!user){
-            return res.json({sucess:false,message:"User not found"})
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.json({ sucess: false, message: "User not found" })
         }
 
-        if(user.verifyOtp==='' ||user.verifyOtp!==otp){
-             return res.json({sucess:false,message:"Invalid otp"})
+        if (user.verifyOtp === '' || user.verifyOtp !== otp) {
+            return res.json({ sucess: false, message: "Invalid otp" })
         }
-        if(user.verifyOtpExpireAt < Date.now()){
-             return res.json({sucess:false,message:"OTP Expired"})
+        if (user.verifyOtpExpireAt < Date.now()) {
+            return res.json({ sucess: false, message: "OTP Expired" })
         }
         user.isAccountVerified = true;
-        user.verifyOtp='';
-        user.verifyOtpExpireAt=0;
+        user.verifyOtp = '';
+        user.verifyOtpExpireAt = 0;
         await user.save();
-        return res.json({sucess:true,message:"Email verified sucessfully"})
+        return res.json({ sucess: true, message: "Email verified sucessfully" })
     } catch (error) {
-       return res.json({sucess:false,message:error.message})  
+        return res.json({ sucess: false, message: error.message })
     }
-    
+
+}
+
+//check if user is authenticated
+export const isAuthenticated = async (req, res) => {
+    try {
+        return res.json({ sucess: true })
+    } catch (error) {
+        return res.json({ sucess: false, message: error.message })
+    }
+
+
 }
