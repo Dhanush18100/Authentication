@@ -36,11 +36,11 @@ export const register = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
         //sending welcome email
-        const mailOptions={
-            from:process.env.SENDER_EMAIL,
-            to:email,
-            subject:"Welcome",
-            text:`Welcome, your account with created email id ${email}`
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: "Welcome",
+            text: `Welcome, your account with created email id ${email}`
         }
 
         await transporter.sendMail(mailOptions);
@@ -101,7 +101,7 @@ export const logout = async (req, res) => {
 
         })
 
-        return res.json({sucess:true,message:"Logged out"})
+        return res.json({ sucess: true, message: "Logged out" })
 
     } catch (error) {
         return res.json({ sucess: false, message: error.message })
@@ -109,3 +109,13 @@ export const logout = async (req, res) => {
     }
 
 }
+
+export const sendVerifyOtp = async (req, res) => {
+    try {
+
+    } catch (error) {
+        res.json({ sucess: false, message: error.message });
+    }
+
+}
+
