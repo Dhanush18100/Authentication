@@ -9,7 +9,7 @@ const Login = () => {
 
     const navigate=useNavigate()
 
-    const {backendUrl ,setIsLoggedin}=useContext(AppContext)
+    const {backendUrl ,setIsLoggedin, getUserData}=useContext(AppContext)
 
     const [state, setState] = useState('Sign Up')
     const [name,setName]=useState('');
@@ -27,9 +27,8 @@ const Login = () => {
              const {data} = await axios.post(backendUrl + '/api/auth/register',{name,email,password})
 
              if(data.sucess){
-                
-
                 setIsLoggedin(true)
+                getUserData()
                 navigate('/')
              }else{
                 toast.error(data.message)
@@ -38,8 +37,8 @@ const Login = () => {
                 const {data} = await axios.post(backendUrl + '/api/auth/login',{email,password})
 
              if(data.sucess){
-                console.log("Navigating to home");
                 setIsLoggedin(true)
+                getUserData()
                 navigate('/')
              }else{
                 toast.error(data.message)
