@@ -15,7 +15,7 @@ authRouter.post('/verify-account',userAuth, verifyEmail);
 
 //user authenication
 
-authRouter.post('/is-auth',userAuth, isAuthenticated);
+authRouter.get('/is-auth',userAuth, isAuthenticated);
 
 //reset password using otp
 authRouter.post('/sent-reset-otp', sendResetOtp);
