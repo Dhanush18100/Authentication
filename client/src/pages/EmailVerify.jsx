@@ -7,14 +7,14 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
 const EmailVerify = () => {
-  const inputRefs = React.useRef([])
-
+  
   axios.defaults.withCredentials=true;
-
+  
   const navigate=useNavigate()
-
+  
   const {backendUrl,isLoggedin,userData,getUserData}=useContext(AppContext)
-
+  
+  const inputRefs = React.useRef([])
   const handleInput=(e,index)=>{
     if(e.target.value.length>0 && index < inputRefs.current.length-1){
       inputRefs.current[index+1].focus()
